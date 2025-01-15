@@ -24,7 +24,7 @@ export class AuthService {
       throw new BadRequestException('Passwords do not match');
     }
 
-    // Kiểm tra email đã tồn tại chưa
+    
     const existingEmail = await this.userAccountModel.findOne({
       email: createDto.email,
     });
@@ -33,7 +33,7 @@ export class AuthService {
       throw new BadRequestException('User with this email already exists');
     }
 
-    // Kiểm tra ID đã tồn tại chưa
+    
     const existingId = await this.userAccountModel.findOne({
       id: createDto.id,
     });
@@ -42,10 +42,10 @@ export class AuthService {
       throw new BadRequestException('User with this ID already exists');
     }
 
-    // Mã hóa mật khẩu
+    
     const hashedPassword = await bcrypt.hash(createDto.password, 10);
 
-    // Chuẩn bị dữ liệu người dùng (role mặc định là 'customer')
+    
     const userData = {
       ...createDto,
       password: hashedPassword,
@@ -54,11 +54,10 @@ export class AuthService {
     };
     delete userData.repassword; // Xóa repassword trước khi lưu
 
-    // Lưu người dùng mới
+    
     const newUser = new this.userAccountModel(userData);
     const savedUser = await newUser.save();
 
-    // Loại bỏ mật khẩu khỏi phản hồi
     const response = savedUser.toObject();
     delete response.password;
     return response;
