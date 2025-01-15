@@ -7,15 +7,18 @@ import {
   Delete,
   Query,
   BadRequestException,
-  Patch
+  Patch,
+  Request,
+  UseGuards
 } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
-
+import { AuthGuard } from 'src/guard/auth.guard';
+import { AdminGuard } from 'src/guard/admin.guard';
 @Controller('customers')
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
-
+  @UseGuards(AuthGuard, AdminGuard)
   @Get('list')
   async findAll(@Query('page') page: number, @Query('limit') limit: number) {
     try {
@@ -37,7 +40,7 @@ export class CustomerController {
       });
     }
   }
-
+  @UseGuards(AuthGuard)
   @Get('detail/:id')
   async findOne(@Param('id') id: string) {
     try {
@@ -56,7 +59,7 @@ export class CustomerController {
       });
     }
   }
-
+  @UseGuards(AuthGuard)
   @Patch('update-personal-info/:userId')
   async updatePersonalInformation(
     @Param('userId') userId: string,
@@ -82,21 +85,22 @@ export class CustomerController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Delete('delete/:id')
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string, @Request() req) {
     try {
-      await this.customerService.remove(+id);
+      await this.customerService.remove(+id, req.user.id);
       return {
         method: 'DELETE',
-        data: { message: `Customer with ID ${id} deleted successfully` },
+        data: { message: `user with ID ${id} deleted successfully` }
       };
     } catch (error) {
       throw new BadRequestException({
         method: 'DELETE',
         error: {
           status: 400,
-          message: error.message,
-        },
+          message: error.message
+        }
       });
     }
   }

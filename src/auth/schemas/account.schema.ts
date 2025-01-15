@@ -5,7 +5,8 @@ import { Document} from 'mongoose';
 export type UserRole = 'customer' | 'admin'; 
 @Schema({ timestamps: true })
 export class UserAccount extends Document {
-  
+  @Prop({ required: true, unique: true })
+  id: number;
   @Prop({ required: true, unique: true })
   email: string;
 

@@ -7,15 +7,18 @@ import {
   Delete,
   Query,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { AuthGuard } from 'src/guard/auth.guard';
+import { AdminGuard } from 'src/guard/admin.guard';
 
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
-
+  @UseGuards(AuthGuard, AdminGuard)
   @Post('create')
   async create(@Body() createProductDto: CreateProductDto) {
     try {
@@ -34,7 +37,7 @@ export class ProductController {
       });
     }
   }
-
+  
   @Get('list')
   async findAll(@Query('page') page: number, @Query('limit') limit: number) {
     try {
@@ -75,7 +78,7 @@ export class ProductController {
       });
     }
   }
-
+  @UseGuards(AuthGuard, AdminGuard)
   @Post('update/:id')
   async update(
     @Param('id') id: string,
@@ -97,7 +100,7 @@ export class ProductController {
       });
     }
   }
-
+  @UseGuards(AuthGuard, AdminGuard)
   @Delete('delete/:id')
   async remove(@Param('id') id: string) {
     try {

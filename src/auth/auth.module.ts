@@ -14,7 +14,7 @@ import { UserAccount, UserAccountSchema } from './schemas/account.schema';
   providers: [AuthService],
   exports: [
     AuthService,
-    MongooseModule, // Export MongooseModule để các module khác có thể sử dụng UserAccountModel
+    MongooseModule, 
   ],
 })
 export class AuthModule {}

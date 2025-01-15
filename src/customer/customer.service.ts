@@ -46,11 +46,15 @@ export class CustomerService {
 
   
 
-  async remove(id: number): Promise<void> {
-    const result = await this.personalInfoModel.deleteOne({ id }).exec();
+  async remove(userId: number, currentUserId: number): Promise<void> {
+    if (userId !== currentUserId) {
+      throw new UnauthorizedException('You can only delete your own account');
+    }
+
+    const result = await this.personalInfoModel.deleteOne({ id: userId }).exec();
 
     if (result.deletedCount === 0) {
-      throw new NotFoundException(`Personal information with ID ${id} not found`);
+      throw new NotFoundException(`Student with ID ${userId} not found`);
     }
   }
 
